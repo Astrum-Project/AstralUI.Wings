@@ -21,7 +21,6 @@ namespace Astrum.AstralUI
         {
             WingAPI.OnWingInit += new Action<Wing.BaseWing>(wing =>
             {
-                AstralCore.Logger.Trace("Creating Wing");
                 // lets listen for any future buttons
                 ModuleManager.OnModuleRegistered += new Action<string, ModuleManager.Module>((mName, module) =>
                 {
@@ -30,7 +29,6 @@ namespace Astrum.AstralUI
                     module.OnCommandRegistered += new Action<string, CommandManager.Command>((cName, command) => Create(command, page, cName,  ref idx));
                 });
 
-                AstralCore.Logger.Trace("Creating old");
                 // now we need to create the existing buttons
                 foreach (KeyValuePair<string, ModuleManager.Module> smp in ModuleManager.modules)
                 {
