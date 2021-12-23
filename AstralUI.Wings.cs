@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-[assembly: MelonInfo(typeof(Astrum.AstralUI.Wings), "AstralUI.Wings", "0.2.0", downloadLink: "github.com/Astrum-Project/AstralUI.Wings")]
+[assembly: MelonInfo(typeof(Astrum.AstralUI.Wings), "AstralUI.Wings", "0.2.1", downloadLink: "github.com/Astrum-Project/AstralUI.Wings")]
 [assembly: MelonGame("VRChat", "VRChat")]
 [assembly: MelonColor(ConsoleColor.DarkMagenta)]
 
@@ -18,15 +18,15 @@ namespace Astrum.AstralUI
         private static readonly Color32 onColor = new(0x5a, 0xb2, 0xa8, 0xFF);
         private static readonly Color32 offColor = new(0xe2, 0xad, 0x78, 0xFF);
 
-        private static readonly Dictionary<string, (WingPage, int)> pages = new(StringComparer.OrdinalIgnoreCase);
-
         public override void OnApplicationStart()
         {
             WingAPI.OnWingInit += new Action<Wing.BaseWing>(wing =>
             {
+                Dictionary<string, (WingPage, int)> pages = new(StringComparer.OrdinalIgnoreCase);
+
                 foreach (KeyValuePair<string, Module> mkvp in CoreUI.Modules)
                 {
-                    (WingPage page, int i) = GetPage(mkvp.Key, wing);
+                    (WingPage page, int i) = GetPage(pages, mkvp.Key, wing);
 
                     foreach (KeyValuePair<string, UIBase> ckvp in mkvp.Value.Commands)
                         CreateButton(page, ckvp.Key, ckvp.Value, ref i);
@@ -36,7 +36,7 @@ namespace Astrum.AstralUI
 
                 CoreUI.OnElementRegistered += (name, elem) =>
                 {
-                    (WingPage page, int i) = GetPage(name, wing);
+                    (WingPage page, int i) = GetPage(pages, name, wing);
 
                     CreateButton(page, name, elem, ref i);
 
@@ -45,7 +45,7 @@ namespace Astrum.AstralUI
             });
         }
 
-        public static (WingPage, int) GetPage(string name, Wing.BaseWing wing)
+        public static (WingPage, int) GetPage(Dictionary<string, (WingPage, int)> pages, string name, Wing.BaseWing wing)
         {
             if (pages.TryGetValue(name, out (WingPage, int) kvp))
                 return kvp;
